@@ -1,0 +1,178 @@
+import java.util.Scanner;
+
+class Book {
+    char[] publicationId = new char[20];
+    char[] title = new char[50];
+    char[] author = new char[50];
+    char[] subscribers = new char[100];
+
+    public Book() {}
+
+    public Book(char[] publicationId, char[] title, char[] author, char[] subscribers) {
+        copyCharArray(this.publicationId, publicationId);
+        copyCharArray(this.title, title);
+        copyCharArray(this.author, author);
+        copyCharArray(this.subscribers, subscribers);
+    }
+
+    public Book(Book b) {
+        copyCharArray(this.publicationId, b.publicationId);
+        copyCharArray(this.title, b.title);
+        copyCharArray(this.author, b.author);
+        copyCharArray(this.subscribers, b.subscribers);
+    }
+
+    void copyCharArray(char[] destination, char[] source) {
+        int len = Math.min(destination.length, source.length);
+        for (int i = 0; i < len; i++) {
+            destination[i] = source[i];
+        }
+        if (len < destination.length) {
+            destination[len] = '\0'; // null-terminate
+        }
+    }
+
+    public void displayBook() {
+        System.out.print("Publication ID: ");
+        System.out.println(new String(publicationId).trim());
+        System.out.print("Title: ");
+        System.out.println(new String(title).trim());
+        System.out.print("Author(s): ");
+        System.out.println(new String(author).trim());
+        System.out.print("Subscribers: ");
+        System.out.println(new String(subscribers).trim());
+        System.out.println("-----------------------------");
+    }
+}
+
+public class Main {
+    static Scanner scanner = new Scanner(System.in);
+    static Book[] books = new Book[100];
+    static int bookCount = 0;
+
+    public static void main(String[] args) {
+        int choice;
+        do {
+            System.out.println("\nE-Library Management System");
+            System.out.println("1. Add New Book");
+            System.out.println("2. Edit Book");
+            System.out.println("3. Delete Book");
+            System.out.println("4. Display All Books");
+            System.out.println("5. Exit");
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+            scanner.nextLine(); // consume newline
+
+            switch (choice) {
+                case 1:
+                    addBook();
+                    break;
+                case 2:
+                    editBook();
+                    break;
+                case 3:
+                    deleteBook();
+                    break;
+                case 4:
+                    displayBooks();
+                    break;
+                case 5:
+                    System.out.println("Exiting program. Goodbye!");
+                    break;
+                default:
+                    System.out.println("Invalid choice! Try again.");
+            }
+        } while (choice != 5);
+    }
+
+    public static void addBook() {
+        System.out.print("Enter Publication ID: ");
+        char[] pubId = scanner.nextLine().toCharArray();
+
+        if (findBookIndex(pubId) != -1) {
+            System.out.println("Book with this Publication ID already exists!");
+            return;
+        }
+
+        System.out.print("Enter Book Title: ");
+        char[] title = scanner.nextLine().toCharArray();
+
+        System.out.print("Enter Author(s): ");
+        char[] author = scanner.nextLine().toCharArray();
+
+        System.out.print("Enter Subscribers: ");
+        char[] subscribers = scanner.nextLine().toCharArray();
+
+        books[bookCount++] = new Book(pubId, title, author, subscribers);
+        System.out.println("Book added successfully!");
+    }
+
+    public static void editBook() {
+        System.out.print("Enter Publication ID of book to edit: ");
+        char[] pubId = scanner.nextLine().toCharArray();
+        int index = findBookIndex(pubId);
+
+        if (index == -1) {
+            System.out.println("Book not found!");
+            return;
+        }
+
+        System.out.print("Enter New Title: ");
+        char[] title = scanner.nextLine().toCharArray();
+
+        System.out.print("Enter New Author(s): ");
+        char[] author = scanner.nextLine().toCharArray();
+
+        System.out.print("Enter New Subscribers: ");
+        char[] subscribers = scanner.nextLine().toCharArray();
+
+        books[index] = new Book(pubId, title, author, subscribers);
+        System.out.println("Book updated successfully!");
+    }
+
+    public static void deleteBook() {
+        System.out.print("Enter Publication ID of book to delete: ");
+        char[] pubId = scanner.nextLine().toCharArray();
+        int index = findBookIndex(pubId);
+
+        if (index == -1) {
+            System.out.println("Book not found!");
+            return;
+        }
+
+        for (int i = index; i < bookCount - 1; i++) {
+            books[i] = books[i + 1];
+        }
+        bookCount--;
+        System.out.println("Book deleted successfully!");
+    }
+
+    public static void displayBooks() {
+        if (bookCount == 0) {
+            System.out.println("No books in the library.");
+            return;
+        }
+
+        for (int i = 0; i < bookCount; i++) {
+            books[i].displayBook();
+        }
+    }
+
+    public static int findBookIndex(char[] pubId) {
+        for (int i = 0; i < bookCount; i++) {
+            if (compareCharArrays(books[i].publicationId, pubId)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public static boolean compareCharArrays(char[] a, char[] b) {
+        int i = 0;
+        while (i < a.length && i < b.length && a[i] != '\0' && b[i] != '\0') {
+            if (a[i] != b[i]) return false;
+            i++;
+        }
+        return (a[i] == '\0' && b[i] == '\0');
+    }
+}
