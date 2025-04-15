@@ -1,0 +1,76 @@
+import java.util.Scanner;
+
+public class WordFrequencyCharArray {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter the sentence:");
+        String input = sc.nextLine().toLowerCase();
+        char[] chars = input.toCharArray();
+        String[] words = new String[100];
+        int wordCount = 0;
+        StringBuilder currentWord = new StringBuilder();
+
+        for (char ch : chars) {
+            if (ch >= 'a' && ch <= 'z') {
+                currentWord.append(ch);
+            } else {
+                if (currentWord.length() > 0) {
+                    words[wordCount++] = currentWord.toString();
+                    currentWord.setLength(0);
+                }
+            }
+        }
+        if (currentWord.length() > 0) {
+            words[wordCount++] = currentWord.toString();
+        }
+
+        int[] counts = new int[wordCount];
+        for (int i = 0; i < wordCount; i++) {
+            if (words[i] == null) continue;
+            counts[i] = 1;
+            for (int j = i + 1; j < wordCount; j++) {
+                if (words[i].equals(words[j])) {
+                    counts[i]++;
+                    words[j] = null;
+                }
+            }
+        }
+
+        System.out.println("Enter word to find its frequency:");
+        String search1 = sc.next().toLowerCase();
+        boolean found1 = false;
+        for (int i = 0; i < wordCount; i++) {
+            if (search1.equals(words[i])) {
+                System.out.println(search1 + " = " + counts[i]);
+                found1 = true;
+                break;
+            }
+        }
+        if (!found1) {
+            System.out.println(search1 + " = 0");
+        }
+
+        System.out.println("Enter another word to find its frequency:");
+        String search2 = sc.next().toLowerCase();
+        boolean found2 = false;
+        for (int i = 0; i < wordCount; i++) {
+            if (search2.equals(words[i])) {
+                System.out.println(search2 + " = " + counts[i]);
+                found2 = true;
+                break;
+            }
+        }
+        if (!found2) {
+            System.out.println(search2 + " = 0");
+        }
+
+        System.out.println("Frequency of every word:");
+        for (int i = 0; i < wordCount; i++) {
+            if (words[i] != null) {
+                System.out.print(words[i] + " = " + counts[i] + " ");
+            }
+        }
+
+        sc.close();
+    }
+}
